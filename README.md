@@ -40,8 +40,8 @@ Only needed to execute actions on the remote node (not for Wake-on-Lan or simple
             "hostname": "example.com", // alternative to ip
             "mac": "12:ab:34:cd:56:ef",
             "location": "In the clouds",
-            "actions": ["wake", "shutdown", "vpn-start", "vpn-stop"], // all the actions the remote supports
-            "token": "<get this from your geminga remote node>" // to ensure trust between server and remote node
+            "actions": ["wake", "shutdown", "vpn-start", "vpn-stop"],
+            "token": "<get this from your geminga remote node>"
         }
     ]
 }
