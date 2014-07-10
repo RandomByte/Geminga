@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Geminga by RandomByte</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Geminga</h1>
+        <p></p>
+
+        <p class="view"><a href="https://github.com/RandomByte/Geminga">View the Project on GitHub <small>RandomByte/Geminga</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/RandomByte/Geminga/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/RandomByte/Geminga/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/RandomByte/Geminga">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="geminga" class="anchor" href="#geminga"><span class="octicon octicon-link"></span></a>Geminga</h1>
+
+<p>Geminga is a neutron star in the constellation Gemini.</p>
+
+<p>This however is an interface that let's you monitor all the computers and servers you administrate and enables you to run actions on or with them. Already implemented are actions like Wake-on-Lan, Shutdown, starting and stopping a VPN service.</p>
+
+<h3>
+<a name="little-explanation" class="anchor" href="#little-explanation"><span class="octicon octicon-link"></span></a>Little explanation:</h3>
+
+<ul>
+<li>
+<strong>Server side actions</strong> don't need the remote node to run a <a href="https://github.com/RandomByte/Geminga-Remote">Geminga-Remote</a> instance (e.g. Wake-on-Lan)</li>
+<li>
+<strong>Remote side actions</strong> need a running <a href="https://github.com/RandomByte/Geminga-Remote">Geminga-Remote</a> instance on the remote node (e.g. Shutdown or start/stop VPN)</li>
+</ul><p>It's very easy to add your own actions on server and/or remote side. The UI will adapt them automatically based on your configuration.</p>
+
+<h1>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h1>
+
+<ol>
+<li>Clone this repository</li>
+<li>Run '$ npm install' to install all dependencies</li>
+<li>Copy config.example.json to config.json and fill it with your data (see chapter "Configuration")</li>
+<li>Run geminga.js! For example using <a href="https://github.com/isaacs/node-supervisor">supervisor</a> '$ supervisor -q geminga.js &gt;&gt; /var/log/geminga.log'</li>
+</ol><h1>
+<a name="remote-nodes" class="anchor" href="#remote-nodes"><span class="octicon octicon-link"></span></a>Remote nodes</h1>
+
+<p>See <a href="https://github.com/RandomByte/Geminga-Remote">Geminga-Remote</a></p>
+
+<p>Only needed to execute actions on the remote node (not for Wake-on-Lan or simple online/offline check using a ping)</p>
+
+<h1>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h1>
+
+<ul>
+<li>
+<strong>Port:</strong> The port the web interface should run on</li>
+<li>
+<strong>Password:</strong> The password protecting the web interface</li>
+<li>
+<strong>Cookie- and Session Secrets:</strong> Enter some random strings (including special characters) to ensure all cookies are properly signed and encrypted</li>
+<li>
+<strong>Resources</strong> (can be PCs, servers, arduinos, whatever is connected to a network...)
+
+<ul>
+<li>
+<strong>Name and ID:</strong> To identify the resource in the web interface</li>
+<li>
+<strong>IP or Hostname:</strong> IP will always overrule hostname. Typically you specify one <em>or</em> the other</li>
+<li>
+<strong>MAC-Address:</strong> Used for Wake-on-Lan</li>
+<li>
+<strong>Location:</strong> Will be displayed in the web interface</li>
+<li>
+<strong>Actions:</strong> All the actions supported for the remote node</li>
+<li>
+<strong>Token:</strong> The token to be used for communication with the remote node. Every remote node can generate a token itself by running '$node geminga-remote.js token'. Just copy the output in your config here.</li>
+</ul>
+</li>
+</ul><h3>
+<a name="this-is-the-example-configuration-you-can-find-in-configexamplejson" class="anchor" href="#this-is-the-example-configuration-you-can-find-in-configexamplejson"><span class="octicon octicon-link"></span></a>This is the example configuration you can find in config.example.json:</h3>
+
+<pre><code>{
+    "port": 3000,
+    "password": "The password I have to remember",
+    "cookieSecret": "My little secret",
+    "sessionSecret": "My other secret",
+    "resources": [
+        {
+            "name": "My beloved server",
+            "id": "beloved-server",
+            "ip": "123.213.231.121",
+            "hostname": "example.com", // alternative to ip
+            "mac": "12:ab:34:cd:56:ef",
+            "location": "In the clouds",
+            "actions": ["wake", "shutdown", "vpn-start", "vpn-stop"],
+            "token": "&lt;get this from your geminga remote node&gt;"
+        }
+    ]
+}
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/RandomByte">RandomByte</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
