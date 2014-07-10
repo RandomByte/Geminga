@@ -2,7 +2,9 @@ Geminga
 =======
 Geminga is a neutron star in the constellation Gemini.
 
-This however is an interface that let's you monitor all the computers and servers you administrate and enables you to run actions on or with them. Already implemented are actions like Wake-on-Lan, Shutdown, starting and stopping a VPN service.
+![alt Gemingas Web Interface](https://raw.githubusercontent.com/RandomByte/Geminga/master/stuff/demo.png)
+
+This however is a node.js powered interface that let's you monitor all the computers and servers you administrate and enables you to run actions on or with them. Already implemented are actions like Wake-on-Lan, Shutdown, starting and stopping a VPN service. The UI is based on [Bootstrap](http://getbootstrap.com/) which makes it responsive, intuitive and nice to look at.
 
 ### Little explanation:
 - **Server side actions** don't need the remote node to run a [Geminga-Remote](https://github.com/RandomByte/Geminga-Remote) instance (e.g. Wake-on-Lan)
