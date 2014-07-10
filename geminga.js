@@ -22,9 +22,9 @@ app.configure(function(){
     app.use('/app', express.static(__dirname + '/app'));
 
     app.use(function(err, req, res, next){
-      console.log(err);
-      res.status(err.status || 500);
-      res.send({ error: err });
+        console.log(err);
+        res.status(err.status || 500);
+        res.send({ error: err });
     });
 
     app.use(app.router);
