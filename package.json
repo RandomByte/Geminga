@@ -1,0 +1,29 @@
+{
+  "name": "Geminga",
+  "version": "0.0.0",
+  "description": "",
+  "main": "geminga.js",
+  "dependencies": {
+    "express": "~3.4.7",
+    "json-socket": "~0.1.2",
+    "ping": "~0.1.7",
+    "wake_on_lan": "~0.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RandomByte/Geminga"
+  },
+  "keywords": [
+    "geminga"
+  ],
+  "author": "Merlin Beutlberger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RandomByte/Geminga/issues"
+  },
+  "homepage": "https://github.com/RandomByte/Geminga"
+}

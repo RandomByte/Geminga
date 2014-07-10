@@ -1,0 +1,82 @@
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+#resources th {
+    text-transform: capitalize;
+}
+
+.busyIndicator {
+    margin-left: 1.1em;
+/*    display: block;
+    margin-left: auto;
+    margin-right: auto;*/
+}
+
+.navbar-inverse .navbar-brand {
+    color: #67a438;
+}
+
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+    color: #86c351;
+}
+
+@media (min-width: 500px) {
+  #login .container {
+    max-width: 500px;
+  }
+}
+
+#login .jumbotron {
+  text-align: center;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+#login .jumbotron h1 {
+    color: #67a438;
+}
+
+#login .jumbotron #form {
+    margin-top: 2em;
+}
+
+.navbar-right {
+    float: right !important;
+}
+
+#resourceDetailModal #resourceDetail button {
+    min-width: 20%;
+    text-align: left;
+}
+
+@media(max-width:767px) {
+    .navbar-right {
+        margin-right:20px;
+    }
+    .navbar-header:after {
+        clear: none;
+    }
+    .navbar-nav.navbar-right > li {
+        float: left;
+    }
+
+    .navbar-collapse:before {
+        clear:both;
+    }
+
+    .navbar-collapse {
+        overflow-y: hidden;
+    }
+    .navbar-collapse.in {
+        overflow-y: visible;
+    }
+    .navbar{
+        border-color: #101010;
+        border-width: 0 0 1px;
+    }
+    .navbar-collapse.in > ul {
+        border-color: #101010;
+        border-top:1px double;
+    }
+}

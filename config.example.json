@@ -1,0 +1,18 @@
+{
+    "port": 3000,
+    "password": "The password I have to remember",
+    "cookieSecret": "My little secret",
+    "sessionSecret": "My other secret",
+    "resources": [
+        {
+            "name": "My beloved server",
+            "id": "beloved-server",
+            "ip": "123.213.231.121",
+            "hostname": "example.com", // alternative to ip
+            "mac": "12:ab:34:cd:56:ef",
+            "location": "In the clouds",
+            "actions": ["wake", "shutdown", "vpn-start", "vpn-stop"], // all the actions the remote supports
+            "token": "<get this from your geminga remote node>" // to ensure trust between server and remote node
+        }
+    ]
+}
