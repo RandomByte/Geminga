@@ -2,10 +2,12 @@
 $(document).ready(function () {
     $('.btn').button()
 
-    if (window.location.pathname !== "/app/login.html") {
+
+    Geminga.util.API.sApiRoot = $("#linkApiRoot").attr("href");
+
+    if (!(new RegExp("^.*/app/login.html$").test(window.location.pathname))) {
         this.geminga = new Geminga.App();
     } else {
-
         $('#password').keypress(function (oEvent) {
           if (oEvent.which == 13) {
             $('#loginBtn').click();
@@ -19,7 +21,7 @@ $(document).ready(function () {
 
             Geminga.util.API.post("login", { password: $('#password').val() },
                 function () {
-                    window.location.href = "/app/index.html";
+                    window.location.href = "index.html";
                 },
                 function (sError) {
                     if (sError === "Unauthorized") {
@@ -109,7 +111,6 @@ Geminga.App = function () {
                     }());
                 };
             });
-
         };
 
     Geminga.App = function() {
@@ -284,7 +285,7 @@ Geminga.util.API.post = function (sUrl, oData, fnOnSuccess, fnOnError, oCallee) 
 Geminga.util.API.send = function (sType, sUrl, oData, fnOnSuccess, fnOnError, oCallee) {
     jQuery.ajax({
         type: sType,
-        url: '/api/' + sUrl,
+        url: (Geminga.util.API.sApiRoot || '/api/') + sUrl,
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(oData),
         success: function (oData) {
@@ -293,8 +294,8 @@ Geminga.util.API.send = function (sType, sUrl, oData, fnOnSuccess, fnOnError, oC
         error: function (oReq, sStatus, sError) {
             var sErrorMsg;
 
-            if (sError === "Unauthorized" && window.location.pathname !== "/app/login.html") {
-                window.location.href = "/app/login.html";
+            if (sError === "Unauthorized" && !(new RegExp("^.*/app/login.html$").test(window.location.pathname))) {
+                window.location.href = "login.html";
             } else {
                 try {
                     sErrorMsg = JSON.parse(oReq.responseText).error;
