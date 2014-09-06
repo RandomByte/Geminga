@@ -3,6 +3,9 @@
     "password": "The password I have to remember",
     "cookieSecret": "My little secret",
     "sessionSecret": "My other secret",
+    "adminAddress": "admin@example.net",
+    "logAttackIpInCleartext": false,
+    "trustProxy": false,
     "resources": [
         {
             "name": "My beloved server",

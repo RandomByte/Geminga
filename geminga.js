@@ -4,7 +4,11 @@ var express         = require('express'),
     wol             = require('wake_on_lan'),
     net             = require('net'),
     JSONSocket      = require('json-socket'),
-    config          = require('./config.json');
+    config          = require('./config.json'),
+    crypto          = require('crypto'),
+    bf              = require('browser_fingerprint'),
+    nodemailer      = require('nodemailer'),
+    os              = require("os");
 
 if (!config || !config.port || !config.resources ||
         !config.password || !config.cookieSecret || !config.sessionSecret) {
@@ -14,6 +18,9 @@ if (!config || !config.port || !config.resources ||
 
 
 app.configure(function(){
+    if (config.trustProxy === true) {
+        app.enable('trust proxy');
+    }
     app.use(express.json());
     app.use(express.cookieParser(config.cookieSecret));
     app.use(express.cookieSession({ secret: config.sessionSecret, key: "geminga.sid",
@@ -31,11 +38,18 @@ app.configure(function(){
 });
 
 app.listen(config.port);
-console.log('Geminga running on port ' + config.port);
+console.log(new Date().getTime() + " Geminga running on port " + config.port);
 
 var aResources = config.resources,
     aSessions = [],
+    oSuspects = {},
+    oAttackers = {},
+    oFingerprintOptions = {
+        toSetCookie: false,
+        onlyStaticElements: true,
+    },
     aPublicResourceData = ["id", "name", "location", "actions"];
+
 
 app.get('/', function(req, res){
     if (req.session && aSessions.indexOf(req.session) !== -1) {
@@ -46,15 +60,94 @@ app.get('/', function(req, res){
 });
 
 app.post('/api/login', function(req, res) {
-    if (req.session && aSessions.indexOf(req.session) !== -1) {
-        res.redirect("/app/index.html");
-    } else if (req.body.password === config.password) {
-        req.session = generateGuid();
-        aSessions.push(req.session);
-        res.send(200);
-    } else {
-        res.redirect("/app/login.html");
-    }
+    bf.fingerprint(req, oFingerprintOptions, function(fingerprint, elementHash, cookieHash){
+        var oSuspect,
+            oAttacker,
+            oYesterday,
+            ipKey = "IP_" + crypto.createHash('sha1').update(req.ips.length > 0 ? req.ips[0] : req.ip).digest('hex'),
+            bfKey = "REQUEST_FINGERPRINT_" + fingerprint;
+    
+        if (oAttackers[ipKey]) {
+            oAttacker = oAttackers[ipKey];
+        } else if (oAttackers[bfKey]) {
+            oAttacker = oAttackers[bfKey];
+        }
+        if (oAttacker) {
+            // Check if last seen less than 24 hours ago
+            oYesterday = new Date();
+            oYesterday.setHours(oYesterday.getHours() - 24);
+            if (oAttacker.lastSeen > oYesterday.getTime()) {
+                // last seen less than 24 hours ago -> keep blocking
+                console.log(new Date().getTime() + " Blocked potential attack from " + ipKey + " " + bfKey);
+                if (config.logAttackIpInCleartext === true) {
+                    console.log(new Date().getTime() + " Attacking ip is " + req.ips.length > 0 ? req.ips[0] : req.ip);
+                }
+                oAttacker.lastSeen = new Date().getTime();
+                res.redirect("/app/login.html");
+                return;
+            } else {
+                // last seen more than 24 hours ago -> demote to suspect
+                oAttacker.tries = 0;
+
+                oSuspects[ipKey] = oAttacker;
+                oSuspects[bfKey] = oAttacker;
+
+                oAttackers[ipKey] = undefined;
+                oAttackers[bfKey] = undefined;
+
+                // continuing normal processing
+            }
+        }
+
+        if (req.session && aSessions.indexOf(req.session) !== -1) {
+            res.redirect("/app/index.html");
+        } else if (req.body.password === config.password) {
+            req.session = generateGuid();
+            aSessions.push(req.session);
+            res.send(200);
+        } else if (req.body.password || req.session) {
+            // Password is supplied but didn't match --> suspicious
+            
+            if (oSuspects[ipKey]) {
+                oSuspect = oSuspects[ipKey];
+            } else if (oSuspects[bfKey]) {
+                oSuspect = oSuspects[bfKey];
+            }
+
+            if (oSuspect) {
+                oSuspect.tries++;
+                oSuspect.lastSeen = new Date().getTime();
+
+                console.log(new Date().getTime() +
+                    " Known suspect " + ipKey + " " + bfKey + " tried " + oSuspect.tries + " times");
+
+                if (oSuspect.tries >= 3) {
+                    // Promote to attacker
+                    console.log(new Date().getTime() + " Promoting " + ipKey + " " + bfKey + " from suspect to attacker");
+                    sendMailToAdmin("[WARNING] Potential attack of Geminga on " + os.hostname(), "A potential attack of Geminga running on host " + os.hostname() + " was detected. Further requests will be silently blocked. Please check your server logs.\n\n " + ipKey + "\n" + bfKey);
+
+                    oAttackers[ipKey] = oSuspect;
+                    oAttackers[bfKey] = oSuspect;
+
+                    oSuspects[ipKey] = undefined;
+                    oSuspects[bfKey] = undefined;
+                }
+            } else {
+                // Add new suspect
+                console.log(new Date().getTime() + " New suspect " + ipKey + " " + bfKey);
+                oSuspect = {
+                    tries: 1,
+                    firstSeen: new Date().getTime(),
+                    lastSeen: new Date().getTime()
+                };
+                oSuspects[ipKey] = oSuspect;
+                oSuspects[bfKey] = oSuspect;
+            }
+            res.redirect("/app/login.html");
+        } else {
+            res.redirect("/app/login.html");
+        }
+    });
 });
 
 app.get('/api/logout', function(req, res) {
@@ -252,6 +345,21 @@ function sendCommandToResource (oResource, sCommand, onSuccess, onError) {
         onError(oError);
     });
 }
+
+var mailTransporter = nodemailer.createTransport();
+
+function sendMailToAdmin (sSubject, sText) {
+    if (config.adminAddress) {
+        console.log("Sending mail to " + config.adminAddress)
+        mailTransporter.sendMail({
+            from: 'geminga@' + os.hostname(),
+            to: config.adminAddress,
+            subject: sSubject,
+            text: sText
+        });
+    }
+}
+
 
 function s4() {
   return Math.floor((1 + Math.random()) * 0x10000)

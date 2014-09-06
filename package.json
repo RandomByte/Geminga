@@ -7,7 +7,9 @@
     "express": "~3.4.7",
     "json-socket": "~0.1.2",
     "ping": "~0.1.7",
-    "wake_on_lan": "~0.0.3"
+    "wake_on_lan": "~0.0.3",
+    "browser_fingerprint": "0.0.5",
+    "nodemailer": "~1.2.2"
   },
   "devDependencies": {},
   "scripts": {

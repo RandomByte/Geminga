@@ -28,6 +28,9 @@ Only needed to execute actions on the remote node (not for Wake-on-Lan or simple
 - **Port:** The port the web interface should run on
 - **Password:** The password protecting the web interface
 - **Cookie- and Session Secrets:** Enter some random strings (including special characters) to ensure all cookies are properly signed and encrypted
+- **Admin address:** The email address to get informed in case of a potential attack (like brute force)
+- **Logging the attack IP in cleartext:** If set to true, an attackers IP adress will be logged in cleartext in addition to its hash
+- **Trust proxy:** Set to true if Geminga is running behind a reverse proxy
 - **Resources** (can be PCs, servers, arduinos, whatever is connected to a network...)
   - **Name and ID:** To identify the resource in the web interface
   - **IP or Hostname:** IP will always overrule hostname. Typically you specify one *or* the other
@@ -43,6 +46,9 @@ Only needed to execute actions on the remote node (not for Wake-on-Lan or simple
     "password": "The password I have to remember",
     "cookieSecret": "My little secret",
     "sessionSecret": "My other secret",
+    "adminAddress": "admin@example.net",
+    "logAttackIpInCleartext": false,
+    "trustProxy": false,
     "resources": [
         {
             "name": "My beloved server",
